@@ -4,7 +4,7 @@ A campus skill exchange for students. Instead of paying for tutoring, you trade 
 
 > I teach you Java, you teach me UI/UX.
 
-SkillLoop is not just a tutoring board. It tracks an exchange economy: students list skills they can teach and skills they want, and the app finds people who fit, including three-person **exchange loops** when nobody matches you directly.
+Students list the skills they can teach and the skills they want. SkillLoop finds people who fit, including three-person **exchange loops** when nobody matches you directly.
 
 ```
 Mohit teaches DSA     ->  Dev
@@ -23,19 +23,9 @@ Meera teaches Cloud   ->  Mohit
 - **Completion and ratings:** mark a session complete, then rate the teacher from 1 to 5.
 - **Skill credits:** the teacher earns 1 credit and the learner spends 1 when a session completes.
 
-## Project status
-
-| Part | State |
-| --- | --- |
-| Frontend (HTML, CSS, JavaScript) | Done. Runs on its own with sample data. |
-| Backend (Java, Spring Boot) | Planned. The frontend is written so it can be connected later. |
-
-The frontend keeps all data in memory, so refreshing the page resets it. The matching code in `app.js` exists only to make the demo work. The real matching engine is meant to live in the Java backend.
-
 ## Tech stack
 
-- **Frontend:** plain HTML, CSS and JavaScript. No framework, no build step.
-- **Backend (planned):** Java and Spring Boot.
+Plain HTML, CSS and JavaScript. No framework, no build step, no server.
 
 ## Folder structure
 
@@ -47,16 +37,18 @@ skillloop/
   README.md
 ```
 
-## Running the frontend
+## Running it
 
 1. Download or clone the repository.
 2. Open `index.html` in a browser.
 
-That is all. No install needed.
-
 **Demo login:** any email and password signs you in as Mohit. Choose "Create an account" to start with an empty profile and 3 credits.
 
-To serve it from Spring Boot later, copy the three files into `src/main/resources/static/`.
+## Things to know
+
+- All data (users, requests, sessions) is stored in memory in `app.js`. Refreshing the page resets everything back to the sample data.
+- Login is a demo and does not check passwords.
+- Completing a session takes one click. A fuller version would need both students to confirm.
 
 ## How matching works
 
@@ -65,30 +57,17 @@ To serve it from Spring Boot later, copy the three files into `src/main/resource
 - the other student wants at least one skill you offer, and
 - the other student offers at least one skill you want.
 
-**Exchange loop.** A loop exists when you teach someone (B), B teaches someone else (C), and C teaches you. In graph terms, each student is a node, each "can teach" link is an edge, and a loop is a cycle of length 3. The backend can extend this to longer cycles with a graph search.
+**Exchange loop.** You teach someone (B), B teaches someone else (C), and C teaches you. In graph terms, each student is a node, each "can teach" link is an edge, and a loop is a cycle of length 3.
 
-## Connecting the backend
+Both are in `findMatches()` and `findLoops()` in `app.js`.
 
-All data lives at the top of `app.js` (the `users`, `requests` and `sessions` arrays). To connect Spring Boot, replace those arrays with `fetch()` calls. A suggested set of endpoints:
+## Ideas for later
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| POST | `/api/auth/register`, `/api/auth/login` | Authentication |
-| GET, PUT | `/api/users/me` | View and update your profile and skills |
-| GET | `/api/matches` | Direct matches and exchange loops |
-| POST | `/api/requests` | Send a swap request |
-| PATCH | `/api/requests/{id}` | Accept or decline |
-| PATCH | `/api/sessions/{id}` | Schedule, confirm completion, rate |
-
-In the frontend, completing a session takes one click. In the real app, both students should confirm before credits move.
-
-## Roadmap
-
-- Build the Spring Boot backend and database.
-- Move matching and loop detection into Java.
+- Save data on a server so it survives a refresh.
+- Real login with passwords.
 - Require both students to confirm a completed session.
-- Support exchange loops longer than three people.
-- Add a session history page.
+- Exchange loops longer than three people.
+- A session history page.
 
 ## Author
 
